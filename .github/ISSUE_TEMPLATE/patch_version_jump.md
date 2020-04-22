@@ -1,16 +1,13 @@
 ---
-name: 🎉 Backwards compatible bug fix
-about: Thanks for fixing a bug
-title: "[BUG FIX]"
+name: 💾 Internal change
+about: Suggest an internal improvement for this project
+title: "[INTERNAL CHANGE]"
 labels: enhancement
 assignees:
 ---
 
-**Bug report (if there is one)**
-The bug report number (e.g. #27)
+**Is your change related to a problem? Please describe.**
+A clear and concise description of what the problem is.
 
-**If there is no bug report, describe the problem**
-A clear and concise description of what the bug is.
-
-**How did you fix it**
-A description of how you fixed the bug
+**Propose a solution**
+A clear and concise description of what you want to change.
