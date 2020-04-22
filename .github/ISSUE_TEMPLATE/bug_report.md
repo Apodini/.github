@@ -1,10 +1,9 @@
 ---
-name: Bug report
+name: 🐛 Bug report
 about: Create a report to help us improve
-title: ''
-labels: ''
+title: "[BUG]"
+labels: bug
 assignees: ''
-
 ---
 
 **Describe the bug**
@@ -20,8 +19,9 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Environment (enter your versions)**
-- Swift Version
-- Xcode Version
+
+ - Swift Version
+ - Xcode Version
 
 **Additional context**
 Add any other context about the problem here.
