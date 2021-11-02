@@ -1,0 +1,41 @@
+#
+# This source file is part of the Apodini open source project
+#
+# SPDX-FileCopyrightText: 2019-2021 Paul Schmiedmayer <paul.schmiedmayer@tum.de>
+#
+# SPDX-License-Identifier: MIT
+#
+
+name: 🧪 Experimental change
+description: Suggest an experimental improvement for this project
+title: "[EXPERIMENTAL CHANGE]: "
+labels: ["experimental"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to contribute to an Apodini project and suggesting an improvement!
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Please provide a description of problem that is addressed
+      placeholder: A clear and concise description of problem that is addressed.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solution
+      description: Please provide a description of the solution you propose.
+      placeholder: A clear and concise description of the solution you propose.
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/Apodini/.github/blob/main/CODE_OF_CONDUCT.md) and [Contributing Guidelines](https://github.com/Apodini/.github/blob/main/CONTRIBUTING.md)
+      options:
+        - label: I agree to follow this project's Code of Conduct and Contributing Guidelines
+          required: true

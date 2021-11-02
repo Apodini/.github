@@ -1,3 +1,13 @@
+<!--
+                  
+This source file is part of the Apodini open source project
+
+SPDX-FileCopyrightText: 2019-2021 Paul Schmiedmayer <paul.schmiedmayer@tum.de>
+
+SPDX-License-Identifier: MIT
+             
+-->
+
 # Contributing Guidelines
 We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
 

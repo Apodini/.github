@@ -1,3 +1,12 @@
+<!--
+                  
+This source file is part of the Apodini open source project
+
+SPDX-FileCopyrightText: 2019-2021 Paul Schmiedmayer <paul.schmiedmayer@tum.de>
+
+SPDX-License-Identifier: MIT
+             
+-->
 
 # Contributor Covenant Code of Conduct
 
