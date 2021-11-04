@@ -28,10 +28,8 @@ on:
         default: bots/update-dependencies
     secrets:
       token:
-        description: 'The Personal Access Token with permissions to push to the repository and trigger GitHub Actions in the resulting pull request. The default value is the GITHUB_TOKEN which does not trigger GitHub Actions in the resulting pull request.'
+        description: 'The Personal Access Token with permissions to push to the repository. Using the GITHUB_TOKEN does not trigger GitHub Actions in the resulting pull request.'
         required: true
-        type: string
-        default: ${{ secrets.GITHUB_TOKEN }}
   
 jobs:
   createPR:
