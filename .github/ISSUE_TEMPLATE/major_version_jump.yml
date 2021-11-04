@@ -9,7 +9,7 @@
 name: 🚀 Major feature request
 description: Suggest a new idea for this project
 title: "[MAJOR FEATURE]: "
-labels: ["enhancement"]
+labels: ["enhancement", "needs version bump"]
 body:
   - type: markdown
     attributes:

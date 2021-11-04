@@ -1,0 +1,23 @@
+#                   
+# This source file is part of the Apodini open source project
+#
+# SPDX-FileCopyrightText: 2021 Paul Schmiedmayer and the project authors (see CONTRIBUTORS.md) <paul.schmiedmayer@tum.de>
+#
+# SPDX-License-Identifier: MIT
+#              
+
+changelog:
+  exclude:
+    authors:
+      - ApodiniBot
+  categories:
+    - title: Semantic Version Major
+      labels:
+        - 'needs version bump'
+    - title: Semantic Version Minor
+      labels:
+        - bug
+        - enhancement
+    - title: Other Changes
+      labels:
+        - "*"
