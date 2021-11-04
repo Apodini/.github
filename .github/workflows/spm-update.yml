@@ -13,17 +13,17 @@ on:
     inputs:
       author:
         description: 'The author of the resulting PR containing the updated Swift package'
-        required: true
+        required: false
         type: string
         default: ApodiniBot
       reviewers:
         description: 'The reviewers of the resulting pull request containing the updated Swift package'
-        required: true
+        required: false
         type: string
         default: PSchmiedmayer
       branch:
         description: 'The branch that should be used to create the pull request'
-        required: true
+        required: false
         type: string
         default: bots/update-dependencies
     secrets:
