@@ -87,8 +87,8 @@ jobs:
     - name: Upload coverage to Codecov
       if: matrix.configuration == 'debug'
       uses: codecov/codecov-action@v2
-    - name: Test Generating Docs && inputs.testdocc == true
-      if: matrix.configuration == 'debug'
+    - name: Test Generating Docs
+      if: matrix.configuration == 'debug' && inputs.testdocc == true
       run: |
           xcodebuild docbuild -scheme ${{ inputs.packagename }} -destination platform=macOS -derivedDataPath ./.xcodebuild
           cp -r $(find ./.xcodebuild -type d -name '${{ inputs.packagename }}.doccarchive') ./${{ inputs.packagename }}.doccarchive
