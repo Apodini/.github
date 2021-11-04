@@ -10,6 +10,28 @@ name: Swift Package Update
 
 on:
   workflow_call:
+    inputs:
+      author:
+        description: 'The author of the resulting PR containing the updated Swift package'
+        required: true
+        type: string
+        default: ApodiniBot
+      reviewers:
+        description: 'The reviewers of the resulting pull request containing the updated Swift package'
+        required: true
+        type: string
+        default: PSchmiedmayer
+      branch:
+        description: 'The branch that should be used to create the pull request'
+        required: true
+        type: string
+        default: bots/update-dependencies
+    secrets:
+      token:
+        description: 'The Personal Access Token with permissions to push to the repository and trigger GitHub Actions in the resulting pull request. The default value is the GITHUB_TOKEN which does not trigger GitHub Actions in the resulting pull request.'
+        required: true
+        type: string
+        default: ${{ secrets.GITHUB_TOKEN }}
   
 jobs:
   createPR:
@@ -25,14 +47,14 @@ jobs:
       run: swift package update
     - uses: peter-evans/create-pull-request@v3
       with:
-        token: ${{ secrets.ACCESS_TOKEN }}
+        token: ${{ secrets.token }}
         commit-message: Update dependencies
         title: Update dependencies
         body: Update the Swift Package dependencies.
         delete-branch: true
         base: develop
         branch: bots/update-dependencies
-        assignees: ApodiniBot
-        committer: ApodiniBot <ApodiniBot@users.noreply.github.com>
-        author: ApodiniBot <ApodiniBot@users.noreply.github.com>
-        reviewers: PSchmiedmayer
+        assignees: ${{ inputs.author }}
+        committer: ${{ inputs.author }} <${{ inputs.author }}@users.noreply.github.com>
+        author: ${{ inputs.author }} <${{ inputs.author }}@users.noreply.github.com>
+        reviewers: ${{ inputs.reviewers }}
