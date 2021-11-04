@@ -19,6 +19,7 @@ on:
         description: 'The path where the Swift Package is located. Defaults to $GITHUB_WORKSPACE'
         required: false
         type: string
+        default: '.'
       usexcodebuild: # Remove this option once swift test works using async/await on macOS 11
         description: 'Testing code containing async/await on macOS 11 currently only works using xcodebuild. This flag indicates if xcodebuild should be used'
         required: false
