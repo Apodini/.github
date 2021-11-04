@@ -81,14 +81,14 @@ jobs:
         configuration: [debug, release, release_testing]
     steps:
     - uses: actions/checkout@v2
-    - name: Install libsqlite3, lsof and zsh
+    - name: Install apt-get Dependencies
       if: ${{ !(startsWith( matrix.linux, 'centos' ) || startsWith( matrix.linux, 'amazonlinux' )) }}
       run: apt-get update && apt-get install -y --no-install-recommends ${{ inputs.aptgetdependencies }}
-    - name: Install libsqlite3
-      if: startsWith( matrix.linux, 'amazonlinux' ) && ${{ inputs.yumdependencies }} != ''
+    - name: Install yum Dependencies
+      if: ${{ startsWith( matrix.linux, 'amazonlinux' ) && ${{ inputs.yumdependencies }} != '' }}
       run: yum update -y && yum install -y ${{ inputs.yumdependencies }}
-    - name: Install libsqlite3
-      if: startsWith( matrix.linux, 'centos' ) && ${{ inputs.yumdependencies }} != ''
+    - name: Install yum Dependencies
+      if: ${{ startsWith( matrix.linux, 'centos' ) && ${{ inputs.yumdependencies }} != '' }}
       run: yum update -y --nobest && yum install -y ${{ inputs.yumdependencies }}
     - uses: actions/cache@v2
       with:
