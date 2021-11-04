@@ -15,6 +15,10 @@ on:
         description: 'Name of the package e.g., passed ass the scheme to xcodebuild on macOS builds'
         required: true
         type: string
+      path:
+        description: 'The path where the Swift Package is located. Defaults to $GITHUB_WORKSPACE'
+        required: false
+        type: string
       usexcodebuild: # Remove this option once swift test works using async/await on macOS 11
         description: 'Testing code containing async/await on macOS 11 currently only works using xcodebuild. This flag indicates if xcodebuild should be used'
         required: false
@@ -46,6 +50,9 @@ jobs:
       fail-fast: false
       matrix:
         configuration: [debug, release, release_testing]
+    defaults:
+      run:
+        working-directory: ${{ inputs.path }}
     steps:
     - uses: actions/checkout@v2
     - uses: maxim-lobanov/setup-xcode@v1.4.0
@@ -103,6 +110,9 @@ jobs:
       matrix:
         linux: [bionic, focal, amazonlinux2, centos8]
         configuration: [debug, release, release_testing]
+    defaults:
+      run:
+        working-directory: ${{ inputs.path }}
     steps:
     - uses: actions/checkout@v2
     - name: Install apt-get Dependencies
