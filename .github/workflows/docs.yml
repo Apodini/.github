@@ -33,7 +33,7 @@ jobs:
       run: xcodebuild -version
     - name: Check Swift version
       run: swift --version
-    - uses: pschmiedmayer/docc2html@main
+    - uses: DoccZz/docc2ghpages@v1
       with:
         scheme: ${{ inputs.packagename }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
