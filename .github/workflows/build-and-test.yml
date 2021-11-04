@@ -15,6 +15,11 @@ on:
         description: 'Name of the package e.g., passed ass the scheme to xcodebuild on macOS builds'
         required: true
         type: string
+      usexcodebuild: # Remove this option once swift test works using async/await on macOS 11
+        description: 'Testing code containing async/await on macOS 11 currently only works using xcodebuild. This flag indicates if xcodebuild should be used'
+        required: false
+        type: boolean
+        default: true
       xcodebuildpostfix: # Remove this option once swift test works using async/await on macOS 11
         description: 'Testing code containing async/await on macOS 11 currently only works using xcodebuild. If you have multiple targets you need to add a postfix like "-Package" to the scheme to test using xcodebuild'
         required: false
@@ -52,24 +57,24 @@ jobs:
     - name: Release Build
       if: matrix.configuration == 'release'
       run: swift build -c release
-    # Testing code containing async/await on macOS 11 currently only works using xcodebuild, uncomment this and remove the xcodebuild versions once this is fixed.
-    # - name: Release Build & Test
-    #   if: matrix.configuration == 'release_testing'
-    #   run: swift test -c release -Xswiftc -enable-testing -Xswiftc -DRELEASE_TESTING
-    # - name: Debug Build & Test
-    #   if: matrix.configuration == 'debug'
-    #   run: swift test -c debug --enable-code-coverage -Xswiftc -DCOVERAGE
-    # - name: Convert coverage report
-    #   if: matrix.configuration == 'debug'
-    #   run: xcrun llvm-cov export -format="lcov" .build/debug/${{ inputs.packagename }}PackageTests.xctest/Contents/MacOS/${{ inputs.packagename }}PackageTests -instr-profile .build/debug/codecov/default.profdata > coverage.lcov
+    # Testing code containing async/await on macOS 11 currently only works using xcodebuild, remove the xcodebuild versions once this is fixed.
+    - name: Release Build & Test
+      if: matrix.configuration == 'release_testing' && inputs.usexcodebuildfortests == false
+      run: swift test -c release -Xswiftc -enable-testing -Xswiftc -DRELEASE_TESTING
+    - name: Debug Build & Test
+      if: matrix.configuration == 'debug' && inputs.usexcodebuildfortests == false
+      run: swift test -c debug --enable-code-coverage -Xswiftc -DCOVERAGE
+    - name: Convert coverage report
+      if: matrix.configuration == 'debug' && inputs.usexcodebuildfortests == false
+      run: xcrun llvm-cov export -format="lcov" .build/debug/${{ inputs.packagename }}PackageTests.xctest/Contents/MacOS/${{ inputs.packagename }}PackageTests -instr-profile .build/debug/codecov/default.profdata > coverage.lcov
     - name: Release Build & Test using xcodebuild
-      if: matrix.configuration == 'release_testing'
+      if: matrix.configuration == 'release_testing' && inputs.usexcodebuildfortests == true
       run: xcodebuild -scheme ${{ inputs.packagename }}${{ inputs.xcodebuildpostfix }} -destination platform=macOS -configuration release 'OTHER_SWIFT_FLAGS=-enable-testing -D RELEASE_TEST' test
     - name: Debug Build & Test using xcodebuild
-      if: matrix.configuration == 'debug'
+      if: matrix.configuration == 'debug' && inputs.usexcodebuildfortests == true
       run: xcodebuild -scheme ${{ inputs.packagename }}${{ inputs.xcodebuildpostfix }} -destination platform=macOS -configuration debug -enableCodeCoverage YES -derivedDataPath ./.xcodebuild 'OTHER_SWIFT_FLAGS=-D COVERAGE' test
     - name: Convert coverage report after using xcodebuild
-      if: matrix.configuration == 'debug'
+      if: matrix.configuration == 'debug' && inputs.usexcodebuildfortests == true
       run: |
           XCTESTPATH=./.xcodebuild/Build/Products/debug/${{ inputs.packagename }}Tests.xctest/Contents/MacOS/${{ inputs.packagename }}Tests
           COVERAGEDATA=$(find ./.xcodebuild -type f -name "Coverage.profdata")
