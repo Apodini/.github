@@ -15,11 +15,10 @@ on:
         description: 'Name of the package e.g., passed ass the scheme to xcodebuild on macOS builds'
         required: true
         type: string
-      usexcodebuildfortests:
-        description: 'Testing code containing async/await on macOS 11 currently only works using xcodebuild. Use this flag to use xcodebuild to run tests on macOS.'
+      xcodebuildpostfix:
+        description: 'Testing code containing async/await on macOS 11 currently only works using xcodebuild. If you have multiple targets you need to add a postfix like "-Package" to the scheme to test using xcodebuild'
         required: false
-        type: boolean
-        default: true
+        type: string
       aptgetdependencies:
         description: 'Dependencies that must be installed using apt-get before builds on Ubuntu'
         required: false
@@ -53,23 +52,23 @@ jobs:
     - name: Release Build
       if: matrix.configuration == 'release'
       run: swift build -c release
-    - name: Release Build & Test
-      if: matrix.configuration == 'release_testing' && inputs.usexcodebuildfortests == false
-      run: swift test -c release -Xswiftc -enable-testing -Xswiftc -DRELEASE_TESTING
-    - name: Debug Build & Test
-      if: matrix.configuration == 'debug' && inputs.usexcodebuildfortests == false
-      run: swift test -c debug --enable-code-coverage -Xswiftc -DCOVERAGE
-    - name: Convert coverage report
-      if: matrix.configuration == 'debug' && inputs.usexcodebuildfortests == false
-      run: xcrun llvm-cov export -format="lcov" .build/debug/MetadataSystemPackageTests.xctest/Contents/MacOS/MetadataSystemPackageTests -instr-profile .build/debug/codecov/default.profdata > coverage.lcov
+    # - name: Release Build & Test
+    #   if: matrix.configuration == 'release_testing'
+    #   run: swift test -c release -Xswiftc -enable-testing -Xswiftc -DRELEASE_TESTING
+    # - name: Debug Build & Test
+    #   if: matrix.configuration == 'debug'
+    #   run: swift test -c debug --enable-code-coverage -Xswiftc -DCOVERAGE
+    # - name: Convert coverage report
+    #   if: matrix.configuration == 'debug'
+    #   run: xcrun llvm-cov export -format="lcov" .build/debug/${{ inputs.packagename }}PackageTests.xctest/Contents/MacOS/${{ inputs.packagename }}PackageTests -instr-profile .build/debug/codecov/default.profdata > coverage.lcov
     - name: Release Build & Test using xcodebuild
-      if: matrix.configuration == 'release_testing' && inputs.usexcodebuildfortests == true
-      run: xcodebuild -scheme ${{ inputs.packagename }} -destination platform=macOS -configuration release 'OTHER_SWIFT_FLAGS=-enable-testing -D RELEASE_TEST' test
+      if: matrix.configuration == 'release_testing'
+      run: xcodebuild -scheme ${{ inputs.packagename }}${{ inputs.xcodebuildpostfix }} -destination platform=macOS -configuration release 'OTHER_SWIFT_FLAGS=-enable-testing -D RELEASE_TEST' test
     - name: Debug Build & Test using xcodebuild
-      if: matrix.configuration == 'debug' && inputs.usexcodebuildfortests == true
-      run: xcodebuild -scheme ${{ inputs.packagename }} -destination platform=macOS -configuration debug -enableCodeCoverage YES -derivedDataPath ./.xcodebuild 'OTHER_SWIFT_FLAGS=-D COVERAGE' test
+      if: matrix.configuration == 'debug'
+      run: xcodebuild -scheme ${{ inputs.packagename }}${{ inputs.xcodebuildpostfix }} -destination platform=macOS -configuration debug -enableCodeCoverage YES -derivedDataPath ./.xcodebuild 'OTHER_SWIFT_FLAGS=-D COVERAGE' test
     - name: Convert coverage report after using xcodebuild
-      if: matrix.configuration == 'debug' && inputs.usexcodebuildfortests == true
+      if: matrix.configuration == 'debug'
       run: |
           XCTESTPATH=./.xcodebuild/Build/Products/debug/${{ inputs.packagename }}Tests.xctest/Contents/MacOS/${{ inputs.packagename }}Tests
           COVERAGEDATA=$(find ./.xcodebuild -type f -name "Coverage.profdata")
@@ -81,7 +80,7 @@ jobs:
       if: matrix.configuration == 'debug'
       run: |
           xcodebuild docbuild -scheme ${{ inputs.packagename }} -destination platform=macOS -derivedDataPath ./.xcodebuild
-          cp -r $(find ./.xcodebuild -type d -name '*.doccarchive') ./${{ inputs.packagename }}.doccarchive
+          cp -r $(find ./.xcodebuild -type d -name '${{ inputs.packagename }}.doccarchive') ./${{ inputs.packagename }}.doccarchive
           echo "The DocC archive can be found at ./${{ inputs.packagename }}.doccarchive"
   linux:
     name: Linux ${{ matrix.linux }} ${{ matrix.configuration }}
