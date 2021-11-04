@@ -13,7 +13,7 @@ changelog:
   categories:
     - title: Semantic Version Major
       labels:
-        - 'needs version bump'
+        - needs version bump
     - title: Semantic Version Minor
       labels:
         - bug
