@@ -24,6 +24,11 @@ on:
         description: 'Testing code containing async/await on macOS 11 currently only works using xcodebuild. If you have multiple targets you need to add a postfix like "-Package" to the scheme to test using xcodebuild'
         required: false
         type: string
+      testdocc:
+        description: 'A flag indicating if the DocC documentation building should be tested'
+        required: false
+        type: boolean
+        default: true
       aptgetdependencies:
         description: 'Dependencies that must be installed using apt-get before builds on Ubuntu'
         required: false
@@ -82,7 +87,7 @@ jobs:
     - name: Upload coverage to Codecov
       if: matrix.configuration == 'debug'
       uses: codecov/codecov-action@v2
-    - name: Test Generating Docs
+    - name: Test Generating Docs && inputs.testdocc == true
       if: matrix.configuration == 'debug'
       run: |
           xcodebuild docbuild -scheme ${{ inputs.packagename }} -destination platform=macOS -derivedDataPath ./.xcodebuild
