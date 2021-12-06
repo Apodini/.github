@@ -63,10 +63,18 @@ jobs:
       with:
         path: .build
         key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-    - name: Check Xcode version
-      run: xcodebuild -version
-    - name: Check Swift version
-      run: swift --version
+    - name: Check Environment
+      run: |
+          xcodebuild -version
+          swift --version
+          echo "inputs.packagename: ${{ inputs.packagename }}"
+          echo "inputs.path: ${{ inputs.path }}"
+          echo "inputs.usexcodebuild: ${{ inputs.usexcodebuild }}"
+          echo "inputs.xcodebuildpostfix: ${{ inputs.xcodebuildpostfix }}"
+          echo "inputs.testdocc: ${{ inputs.testdocc }}"
+          echo "inputs.aptgetdependencies: ${{ inputs.aptgetdependencies }}"
+          echo "inputs.yumdependencies: ${{ inputs.yumdependencies }}"
+          echo "matrix.configuration: ${{ matrix.configuration }}"
     - name: Release Build
       if: matrix.configuration == 'release'
       run: swift build -c release
@@ -116,14 +124,26 @@ jobs:
         working-directory: ${{ inputs.path }}
     steps:
     - uses: actions/checkout@v2
+    - name: Check Environment
+      run: |
+          swift --version
+          echo "inputs.packagename: ${{ inputs.packagename }}"
+          echo "inputs.path: ${{ inputs.path }}"
+          echo "inputs.usexcodebuild: ${{ inputs.usexcodebuild }}"
+          echo "inputs.xcodebuildpostfix: ${{ inputs.xcodebuildpostfix }}"
+          echo "inputs.testdocc: ${{ inputs.testdocc }}"
+          echo "inputs.aptgetdependencies: ${{ inputs.aptgetdependencies }}"
+          echo "inputs.yumdependencies: ${{ inputs.yumdependencies }}"
+          echo "matrix.linux: ${{ matrix.linux }}"
+          echo "matrix.configuration: ${{ matrix.configuration }}"
     - name: Install apt-get Dependencies
-      if: ${{ !(startsWith( matrix.linux, 'centos' ) || startsWith( matrix.linux, 'amazonlinux' )) }}
+      if: !(matrix.linux == 'centos' || matrix.linux == 'amazonlinux' )
       run: apt-get update && apt-get install -y --no-install-recommends ${{ inputs.aptgetdependencies }}
     - name: Install yum Dependencies
-      if: ${{ startsWith( matrix.linux, 'amazonlinux' ) && inputs.yumdependencies != '' }}
+      if: matrix.linux == 'amazonlinux' && inputs.yumdependencies != ''
       run: yum update -y && yum install -y ${{ inputs.yumdependencies }}
     - name: Install yum Dependencies
-      if: ${{ startsWith( matrix.linux, 'centos' ) && inputs.yumdependencies != '' }}
+      if: matrix.linux == 'centos' && inputs.yumdependencies != ''
       run: yum update -y --nobest && yum install -y ${{ inputs.yumdependencies }}
     - uses: actions/cache@v2
       with:

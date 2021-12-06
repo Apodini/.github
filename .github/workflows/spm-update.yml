@@ -39,8 +39,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Check Swift version
-      run: swift --version
+    - name: Check Environment
+      run: |
+          swift --version
+          echo "inputs.author: ${{ inputs.author }}"
+          echo "inputs.reviewers: ${{ inputs.reviewers }}"
+          echo "inputs.branch: ${{ inputs.branch }}"
     - name: Update Swift Packages
       run: swift package update
     - uses: peter-evans/create-pull-request@v3
