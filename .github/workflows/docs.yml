@@ -29,10 +29,11 @@ jobs:
       with:
         path: .build
         key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-    - name: Check Xcode version
-      run: xcodebuild -version
-    - name: Check Swift version
-      run: swift --version
+    - name: Check Environment
+      run: |
+          xcodebuild -version
+          swift --version
+          echo "inputs.packagename: ${{ inputs.packagename }}"
     - uses: DoccZz/docc2ghpages@v1
       with:
         scheme: ${{ inputs.packagename }}
