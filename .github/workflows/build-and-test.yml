@@ -137,7 +137,7 @@ jobs:
           echo "matrix.linux: ${{ matrix.linux }}"
           echo "matrix.configuration: ${{ matrix.configuration }}"
     - name: Install apt-get Dependencies
-      if: !(matrix.linux == 'centos' || matrix.linux == 'amazonlinux' )
+      if: matrix.linux != 'centos' && matrix.linux != 'amazonlinux' && inputs.aptgetdependencies != ''
       run: apt-get update && apt-get install -y --no-install-recommends ${{ inputs.aptgetdependencies }}
     - name: Install yum Dependencies
       if: matrix.linux == 'amazonlinux' && inputs.yumdependencies != ''
