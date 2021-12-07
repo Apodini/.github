@@ -137,13 +137,13 @@ jobs:
           echo "matrix.linux: ${{ matrix.linux }}"
           echo "matrix.configuration: ${{ matrix.configuration }}"
     - name: Install apt-get Dependencies
-      if: matrix.linux != 'centos' && matrix.linux != 'amazonlinux' && inputs.aptgetdependencies != ''
+      if: matrix.linux != 'centos8' && matrix.linux != 'amazonlinux2' && inputs.aptgetdependencies != ''
       run: apt-get update && apt-get install -y --no-install-recommends ${{ inputs.aptgetdependencies }}
     - name: Install yum Dependencies
-      if: matrix.linux == 'amazonlinux' && inputs.yumdependencies != ''
+      if: matrix.linux == 'amazonlinux2' && inputs.yumdependencies != ''
       run: yum update -y && yum install -y ${{ inputs.yumdependencies }}
     - name: Install yum Dependencies
-      if: matrix.linux == 'centos' && inputs.yumdependencies != ''
+      if: matrix.linux == 'centos8' && inputs.yumdependencies != ''
       run: yum update -y --nobest && yum install -y ${{ inputs.yumdependencies }}
     - uses: actions/cache@v2
       with:
