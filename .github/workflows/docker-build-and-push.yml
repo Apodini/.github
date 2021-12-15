@@ -75,7 +75,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./${{ inputs.docker-file }}
+          file: ${{ inputs.docker-file }}
           build-args: |
             baseimage=${{ steps.baseimage.outputs.value }}
           push: true
