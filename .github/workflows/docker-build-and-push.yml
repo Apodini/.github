@@ -13,7 +13,7 @@ on:
     inputs:
       docker-file:
         description: 'Path or name of the Docker file. The default values is `Dockerfile`. The docker file can use the `baseimage` to get an architecture specific Swift base image'
-        required: true
+        required: false
         type: string
         default: 'Dockerfile'
       image-name:
