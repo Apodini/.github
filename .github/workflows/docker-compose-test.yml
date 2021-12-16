@@ -42,7 +42,7 @@ jobs:
         if: inputs.testscript != ''
         run: |
           sleep 5
-          sh ${{ inputs.working-directory }}/${{ inputs.testscript }}
+          sh ${{ inputs.testscript }}
       - name: Docker compose down
         if: always()
         run: docker-compose down
