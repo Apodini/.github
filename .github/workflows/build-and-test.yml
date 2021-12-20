@@ -151,7 +151,8 @@ jobs:
         key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
     - name: Test Generating Docs
       run: |
-          xcodebuild -resolvePackageDependencies
-          xcodebuild docbuild -scheme ${{ inputs.packagename }} -destination platform=macOS -derivedDataPath ./.xcodebuild
-          cp -r $(find ./.xcodebuild -type d -name '${{ inputs.packagename }}.doccarchive') ./${{ inputs.packagename }}.doccarchive
+          rm -rf ~/.xcodebuild 
+          mkdir ~/.xcodebuild
+          xcodebuild docbuild -scheme ${{ inputs.packagename }} -destination platform=macOS -derivedDataPath ~/.xcodebuild
+          cp -r $(find ~/.xcodebuild -type d -name '${{ inputs.packagename }}.doccarchive') ./${{ inputs.packagename }}.doccarchive
           echo "The DocC archive can be found at ./${{ inputs.packagename }}.doccarchive"
