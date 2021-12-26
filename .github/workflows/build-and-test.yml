@@ -112,14 +112,14 @@ jobs:
           echo "matrix.configuration: ${{ matrix.configuration }}"
           echo "cache key: ${{ runner.os }}-${{matrix.linux}}-spm-${{ hashFiles('Package.resolved') }}"
     - name: Install apt-get Dependencies
-      if: matrix.linux != 'centos8' && matrix.linux != 'amazonlinux2' && inputs.aptgetdependencies != ''
-      run: apt-get update && apt-get install -y --no-install-recommends ${{ inputs.aptgetdependencies }}
+      if: matrix.linux != 'centos8' && matrix.linux != 'amazonlinux2' && (inputs.aptgetdependencies != '' || inputs.installgrpcurl)
+      run: apt-get update && apt-get install -y --no-install-recommends wget ${{ inputs.aptgetdependencies }}
     - name: Install yum Dependencies
-      if: matrix.linux == 'amazonlinux2' && inputs.yumdependencies != ''
-      run: yum update -y && yum install -y ${{ inputs.yumdependencies }}
+      if: matrix.linux == 'amazonlinux2' && (inputs.yumdependencies != '' || inputs.installgrpcurl)
+      run: yum update -y && yum install -y wget ${{ inputs.yumdependencies }}
     - name: Install yum Dependencies
-      if: matrix.linux == 'centos8' && inputs.yumdependencies != ''
-      run: yum update -y --nobest && yum install -y ${{ inputs.yumdependencies }}
+      if: matrix.linux == 'centos8' && (inputs.yumdependencies != '' || inputs.installgrpcurl)
+      run: yum update -y --nobest && yum install -y wget ${{ inputs.yumdependencies }}
     - name: Install grpcurl
       if: inputs.installgrpcurl
       run: |
