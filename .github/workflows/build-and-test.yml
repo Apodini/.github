@@ -33,6 +33,11 @@ on:
         description: 'Dependencies that must be installed using yum before builds on Amazon Linux and CentOS'
         required: false
         type: string
+      installgrpcurl:
+        description: 'A flag indicating if grpcurl should be installed'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   macos:
@@ -59,6 +64,9 @@ jobs:
           echo "inputs.testdocc: ${{ inputs.testdocc }}"
           echo "matrix.configuration: ${{ matrix.configuration }}"
           echo "cache key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}"
+    - name: Install grpcurl
+      if: inputs.installgrpcurl
+      run: brew install grpcurl
     - uses: actions/cache@v2
       with:
         path: .build
@@ -112,6 +120,12 @@ jobs:
     - name: Install yum Dependencies
       if: matrix.linux == 'centos8' && inputs.yumdependencies != ''
       run: yum update -y --nobest && yum install -y ${{ inputs.yumdependencies }}
+    - name: Install grpcurl
+      if: inputs.installgrpcurl
+      run: |
+        wget 'https://github.com/fullstorydev/grpcurl/releases/download/v1.8.5/grpcurl_1.8.5_linux_x86_64.tar.gz'
+        tar -zxvf grpcurl_1.8.5_linux_x86_64.tar.gz grpcurl
+        mv grpcurl /usr/local/bin/
     - uses: actions/cache@v2
       with:
         path: .build
