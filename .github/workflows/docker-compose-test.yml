@@ -1,0 +1,48 @@
+#
+# This source file is part of the Apodini open source project
+#
+# SPDX-FileCopyrightText: 2021 Paul Schmiedmayer and the project authors (see CONTRIBUTORS.md) <paul.schmiedmayer@tum.de>
+#
+# SPDX-License-Identifier: MIT
+#
+
+name: Docker Compose
+
+on:
+  workflow_call:
+    inputs:
+      docker-compose-file:
+        description: 'Path or name of the Docker compose file. The default values is `docker-compose-development.yml`'
+        required: false
+        type: string
+        default: 'docker-compose-development.yml'
+      working-directory:
+        description: 'The working-directory of the GitHub Action. Defaults to $GITHUB_WORKSPACE'
+        required: false
+        type: string
+        default: '.'
+      testscript:
+        description: 'Optional path or name to a test script to test the Docker compose setup'
+        required: false
+        type: string
+
+jobs:
+  buildandtest:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Docker compose up
+        run: docker-compose -f ${{ inputs.working-directory }}/${{ inputs.docker-compose-file }} up -d --build
+      - name: Run test script
+        if: inputs.testscript != ''
+        run: |
+          sleep 5
+          sh ${{ inputs.testscript }}
+      - name: Docker compose down
+        if: always()
+        run: docker-compose down
