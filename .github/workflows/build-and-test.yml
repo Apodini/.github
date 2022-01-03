@@ -20,6 +20,11 @@ on:
         required: false
         type: string
         default: '.'
+      supportsmacos11:
+        description: 'Defines if the Swift Package supports macOS 11, the latest version currently available on GitHub Actions Virtual Environments'
+        required: false
+        type: boolean
+        default: true
       testdocc:
         description: 'A flag indicating if the DocC documentation building should be tested'
         required: false
@@ -42,6 +47,7 @@ on:
 jobs:
   macos:
     name: macOS ${{ matrix.configuration }}
+    if: inputs.supportsmacos11
     runs-on: macos-11
     strategy:
       fail-fast: false
