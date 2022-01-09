@@ -58,7 +58,7 @@ jobs:
         working-directory: ${{ inputs.path }}
     steps:
     - uses: actions/checkout@v2
-    - uses: maxim-lobanov/setup-xcode@v1.4.0
+    - uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: latest
     - name: Check Environment
@@ -154,7 +154,7 @@ jobs:
         working-directory: ${{ inputs.path }}
     steps:
     - uses: actions/checkout@v2
-    - uses: maxim-lobanov/setup-xcode@v1.4.0
+    - uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: latest
     - name: Check Environment

@@ -27,12 +27,9 @@ on:
         default: '.'
 
 jobs:
-  docker:
-    name: Docker Build and Push Image ${{ matrix.architecture }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        architecture: [arm64, amd64]
+  dockerARM64:
+    name: Docker Build and Push Image ARM64
+    runs-on: ARM64
     defaults:
       run:
         working-directory: ${{ inputs.working-directory }}
@@ -44,32 +41,12 @@ jobs:
         uses: WyriHaximus/github-action-get-previous-tag@v1
         with:
           fallback: latest
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-        with:
-          platforms: linux/${{ matrix.architecture }}
-      - name: Set up docker buildx
-        uses: docker/setup-buildx-action@v1
-        with:
-          install: true
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: ${{ inputs.image-name }}
       - name: Log in to the container registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Determine Base Image
-        uses: haya14busa/action-cond@v1
-        id: baseimage
-        with:
-          cond: ${{ matrix.architecture == 'arm64' }}
-          if_true: 'swiftarm/swift:5.5.1-ubuntu-focal'
-          if_false: 'swift:focal'
       - name: Build and push docker image
         id: buildandpush
         uses: docker/build-push-action@v2
@@ -77,15 +54,41 @@ jobs:
           context: .
           file: ${{ inputs.docker-file }}
           build-args: |
-            baseimage=${{ steps.baseimage.outputs.value }}
+            baseimage=swiftarm/swift:5.5.1-ubuntu-focal
           push: true
-          platforms: linux/${{ matrix.architecture }}
-          tags: ghcr.io/${{ inputs.image-name }}:latest-${{ matrix.architecture }},ghcr.io/${{ inputs.image-name }}:${{ steps.latesttag.outputs.tag }}-${{ matrix.architecture }}
-          labels: ${{ steps.meta.outputs.labels }}
-      - name: Image digest
-        run: echo ${{ steps.buildandpush.outputs.digest }}
+          tags: ghcr.io/${{ inputs.image-name }}:latest-arm64,ghcr.io/${{ inputs.image-name }}:${{ steps.latesttag.outputs.tag }}-arm64
+  dockerAMD64:
+    name: Docker Build and Push Image AMD64
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Get latest tag
+        id: latesttag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+        with:
+          fallback: latest
+      - name: Log in to the container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push docker image
+        id: buildandpush
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ${{ inputs.docker-file }}
+          build-args: |
+            baseimage=swift:focal
+          push: true
+          tags: ghcr.io/${{ inputs.image-name }}:latest-amd64,ghcr.io/${{ inputs.image-name }}:${{ steps.latesttag.outputs.tag }}-amd64
   dockermanifest:
-    needs: [docker]
+    needs: [dockerARM64, dockerAMD64]
     name: Create Multi-CPU Architecture Image
     runs-on: ubuntu-latest
     steps:
