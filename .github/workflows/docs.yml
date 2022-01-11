@@ -45,7 +45,6 @@ jobs:
       run: |
         git clone https://github.com/DoccZz/docc2html.git
         cd docc2html
-        git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
         swift run docc2html ../${{ inputs.packagename }}.doccarchive ../docs
     - uses: peaceiris/actions-gh-pages@v3
       with:
