@@ -25,6 +25,11 @@ on:
         required: false
         type: boolean
         default: true
+      test:
+        description: 'A flag indicating if the Swift package contains tests'
+        required: false
+        type: boolean
+        default: true
       testdocc:
         description: 'A flag indicating if the DocC documentation building should be tested'
         required: false
@@ -81,16 +86,16 @@ jobs:
       if: matrix.configuration == 'release'
       run: swift build -c release
     - name: Release Build & Test
-      if: matrix.configuration == 'release_testing'
+      if: matrix.configuration == 'release_testing' && inputs.test
       run: swift test -c release -Xswiftc -enable-testing -Xswiftc -DRELEASE_TESTING
     - name: Debug Build & Test
-      if: matrix.configuration == 'debug'
+      if: matrix.configuration == 'debug' && inputs.test
       run: swift test -c debug --enable-code-coverage -Xswiftc -DCOVERAGE
     - name: Convert coverage report
-      if: matrix.configuration == 'debug'
+      if: matrix.configuration == 'debug' && inputs.test
       run: xcrun llvm-cov export -format="lcov" .build/debug/${{ inputs.packagename }}PackageTests.xctest/Contents/MacOS/${{ inputs.packagename }}PackageTests -instr-profile .build/debug/codecov/default.profdata > coverage.lcov
     - name: Upload coverage to Codecov
-      if: matrix.configuration == 'debug'
+      if: matrix.configuration == 'debug' && inputs.test
       uses: codecov/codecov-action@v2
   linux:
     name: Linux ${{ matrix.linux }} ${{ matrix.configuration }}
@@ -140,10 +145,10 @@ jobs:
       if: matrix.configuration == 'release'
       run: swift build -c release
     - name: Release Build & Test
-      if: matrix.configuration == 'release_testing'
+      if: matrix.configuration == 'release_testing' && inputs.test
       run: swift test -c release -Xswiftc -enable-testing -Xswiftc -DRELEASE_TESTING
     - name: Debug Build & Test
-      if: matrix.configuration == 'debug'
+      if: matrix.configuration == 'debug' && inputs.test
       run: swift test -c debug
   generate-docs:
     name: Generate Docs
