@@ -34,7 +34,21 @@ jobs:
           xcodebuild -version
           swift --version
           echo "inputs.packagename: ${{ inputs.packagename }}"
-    - uses: DoccZz/docc2ghpages@v1
+    - name: Generate Documentation
+      run: |
+          rm -rf ~/.xcodebuild 
+          mkdir ~/.xcodebuild
+          xcodebuild docbuild -scheme ${{ inputs.packagename }} -destination platform=macOS -derivedDataPath ~/.xcodebuild
+          cp -r $(find ~/.xcodebuild -type d -name '${{ inputs.packagename }}.doccarchive') ./${{ inputs.packagename }}.doccarchive
+          echo "The DocC archive can be found at ./${{ inputs.packagename }}.doccarchive"
+    - name: Genereate static HTML page
+      run: |
+        git clone https://github.com/DoccZz/docc2html.git
+        cd docc2html
+        git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
+        swift run docc2html ../${{ inputs.packagename }}.doccarchive ../docs
+    - uses: peaceiris/actions-gh-pages@v3
       with:
-        scheme: ${{ inputs.packagename }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ github.token }}
+        publish_dir: ./docs
+        force_orphan: true
