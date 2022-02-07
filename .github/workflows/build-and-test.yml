@@ -84,20 +84,19 @@ jobs:
           echo "inputs.testdocc: ${{ inputs.testdocc }}"
           echo "matrix.configuration: ${{ matrix.configuration }}"
           echo "cache key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}"
+    - name: Install Homebrew dependencies
+      if: inputs.homebrewdependencies != ''
+      run: brew install ${{ inputs.homebrewdependencies }}
     - name: Install grpcurl
       if: inputs.installgrpcurl
       run: brew install grpcurl
+    - name: Install protoc
+      if: inputs.installprotoc
+      run: brew install protobuf
     - uses: actions/cache@v2
       with:
         path: .build
         key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-
-    - name: Set up Homebrew
-      if: inputs.homebrewdependencies != ''
-      uses: Homebrew/actions/setup-homebrew@master
-    - name: Install Homebrew dependencies
-      if: inputs.homebrewdependencies != ''
-      run: brew install ${{ inputs.homebrewdependencies }}
 
     - name: Release Build
       if: matrix.configuration == 'release'
@@ -140,13 +139,13 @@ jobs:
           echo "matrix.configuration: ${{ matrix.configuration }}"
           echo "cache key: ${{ runner.os }}-${{matrix.linux}}-spm-${{ hashFiles('Package.resolved') }}"
     - name: Install apt-get Dependencies
-      if: matrix.linux != 'centos8' && matrix.linux != 'amazonlinux2' && (inputs.aptgetdependencies != '' || inputs.installgrpcurl)
+      if: matrix.linux != 'centos8' && matrix.linux != 'amazonlinux2' && (inputs.aptgetdependencies != '' || inputs.installgrpcurl || inputs.installprotoc)
       run: apt-get update && apt-get install -y --no-install-recommends wget ${{ inputs.aptgetdependencies }}
     - name: Install yum Dependencies
-      if: matrix.linux == 'amazonlinux2' && (inputs.yumdependencies != '' || inputs.installgrpcurl)
+      if: matrix.linux == 'amazonlinux2' && (inputs.yumdependencies != '' || inputs.installgrpcurl || inputs.installprotoc)
       run: yum update -y && yum install -y wget unzip ${{ inputs.yumdependencies }}
     - name: Install yum Dependencies
-      if: matrix.linux == 'centos8' && (inputs.yumdependencies != '' || inputs.installgrpcurl)
+      if: matrix.linux == 'centos8' && (inputs.yumdependencies != '' || inputs.installgrpcurl || inputs.installprotoc)
       run: yum update -y --nobest && yum install -y wget unzip ${{ inputs.yumdependencies }}
     - name: Install grpcurl
       if: inputs.installgrpcurl
