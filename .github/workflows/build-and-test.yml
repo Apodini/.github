@@ -140,7 +140,7 @@ jobs:
           echo "cache key: ${{ runner.os }}-${{matrix.linux}}-spm-${{ hashFiles('Package.resolved') }}"
     - name: Install apt-get Dependencies
       if: matrix.linux != 'centos8' && matrix.linux != 'amazonlinux2' && (inputs.aptgetdependencies != '' || inputs.installgrpcurl || inputs.installprotoc)
-      run: apt-get update && apt-get install -y --no-install-recommends wget ${{ inputs.aptgetdependencies }}
+      run: apt-get update && apt-get install -y --no-install-recommends wget unzip ${{ inputs.aptgetdependencies }}
     - name: Install yum Dependencies
       if: matrix.linux == 'amazonlinux2' && (inputs.yumdependencies != '' || inputs.installgrpcurl || inputs.installprotoc)
       run: yum update -y && yum install -y wget unzip ${{ inputs.yumdependencies }}
