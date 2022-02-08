@@ -158,7 +158,8 @@ jobs:
       run: |
         wget 'https://github.com/protocolbuffers/protobuf/releases/download/v3.19.4/protoc-3.19.4-linux-x86_64.zip'
         unzip protoc-3.19.4-linux-x86_64.zip
-        mv bin/protoc /usr/local/bin
+        mv bin /usr/local
+        mv include /usr/local
     - uses: actions/cache@v2
       with:
         path: .build
