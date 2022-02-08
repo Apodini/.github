@@ -48,6 +48,15 @@ on:
         required: false
         type: boolean
         default: false
+      homebrewdependencies:
+        description: 'Dependencies that mus be installed using homebrew before builds on macOS'
+        required: false
+        type: string
+      installprotoc:
+        description: 'A flag indicating if protobuf compuler should be installed'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   macos:
@@ -75,13 +84,20 @@ jobs:
           echo "inputs.testdocc: ${{ inputs.testdocc }}"
           echo "matrix.configuration: ${{ matrix.configuration }}"
           echo "cache key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}"
+    - name: Install Homebrew dependencies
+      if: inputs.homebrewdependencies != ''
+      run: brew install ${{ inputs.homebrewdependencies }}
     - name: Install grpcurl
       if: inputs.installgrpcurl
       run: brew install grpcurl
+    - name: Install protoc
+      if: inputs.installprotoc
+      run: brew install protobuf
     - uses: actions/cache@v2
       with:
         path: .build
         key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+
     - name: Release Build
       if: matrix.configuration == 'release'
       run: swift build -c release
@@ -123,20 +139,26 @@ jobs:
           echo "matrix.configuration: ${{ matrix.configuration }}"
           echo "cache key: ${{ runner.os }}-${{matrix.linux}}-spm-${{ hashFiles('Package.resolved') }}"
     - name: Install apt-get Dependencies
-      if: matrix.linux != 'centos8' && matrix.linux != 'amazonlinux2' && (inputs.aptgetdependencies != '' || inputs.installgrpcurl)
+      if: matrix.linux != 'centos8' && matrix.linux != 'amazonlinux2' && (inputs.aptgetdependencies != '' || inputs.installgrpcurl || inputs.installprotoc)
       run: apt-get update && apt-get install -y --no-install-recommends wget ${{ inputs.aptgetdependencies }}
     - name: Install yum Dependencies
-      if: matrix.linux == 'amazonlinux2' && (inputs.yumdependencies != '' || inputs.installgrpcurl)
-      run: yum update -y && yum install -y wget ${{ inputs.yumdependencies }}
+      if: matrix.linux == 'amazonlinux2' && (inputs.yumdependencies != '' || inputs.installgrpcurl || inputs.installprotoc)
+      run: yum update -y && yum install -y wget unzip ${{ inputs.yumdependencies }}
     - name: Install yum Dependencies
-      if: matrix.linux == 'centos8' && (inputs.yumdependencies != '' || inputs.installgrpcurl)
-      run: yum update -y --nobest && yum install -y wget ${{ inputs.yumdependencies }}
+      if: matrix.linux == 'centos8' && (inputs.yumdependencies != '' || inputs.installgrpcurl || inputs.installprotoc)
+      run: yum update -y --nobest && yum install -y wget unzip ${{ inputs.yumdependencies }}
     - name: Install grpcurl
       if: inputs.installgrpcurl
       run: |
         wget 'https://github.com/fullstorydev/grpcurl/releases/download/v1.8.5/grpcurl_1.8.5_linux_x86_64.tar.gz'
         tar -zxvf grpcurl_1.8.5_linux_x86_64.tar.gz grpcurl
         mv grpcurl /usr/local/bin/
+    - name: Install protoc
+      if: inputs.installprotoc
+      run: |
+        wget 'https://github.com/protocolbuffers/protobuf/releases/download/v3.19.4/protoc-3.19.4-linux-x86_64.zip'
+        unzip protoc-3.19.4-linux-x86_64.zip
+        mv bin/protoc /usr/local/bin
     - uses: actions/cache@v2
       with:
         path: .build
