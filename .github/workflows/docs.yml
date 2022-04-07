@@ -11,15 +11,15 @@ name: Generate Docs
 on:
   workflow_call:
     inputs:
-      packagename:
-        description: 'Name of the package e.g., passed as the scheme to xcodebuild on macOS builds'
+      targetname:
+        description: 'Name of the target that the documentation should be build of'
         required: true
         type: string
 
 jobs:
   macos:
     name: Generate Docs
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
     - uses: maxim-lobanov/setup-xcode@v1
@@ -33,19 +33,15 @@ jobs:
       run: |
           xcodebuild -version
           swift --version
-          echo "inputs.packagename: ${{ inputs.packagename }}"
+          echo "inputs.targetname: ${{ inputs.targetname }}"
     - name: Generate Documentation
       run: |
-          rm -rf ~/.xcodebuild 
-          mkdir ~/.xcodebuild
-          xcodebuild docbuild -scheme ${{ inputs.packagename }} -destination platform=macOS -derivedDataPath ~/.xcodebuild
-          cp -r $(find ~/.xcodebuild -type d -name '${{ inputs.packagename }}.doccarchive') ./${{ inputs.packagename }}.doccarchive
-          echo "The DocC archive can be found at ./${{ inputs.packagename }}.doccarchive"
-    - name: Genereate static HTML page
-      run: |
-        git clone https://github.com/DoccZz/docc2html.git
-        cd docc2html
-        swift run docc2html ../${{ inputs.packagename }}.doccarchive ../docs
+          swift package --allow-writing-to-directory ./docs \
+            generate-documentation --target ${{ inputs.targetname }} \
+            --disable-indexing \
+            --transform-for-static-hosting \
+            --hosting-base-path ${{ github.event.repository.name }} \
+            --output-path ./docs
     - uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ github.token }}
