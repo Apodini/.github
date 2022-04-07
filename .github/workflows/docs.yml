@@ -34,6 +34,7 @@ jobs:
           xcodebuild -version
           swift --version
           echo "inputs.targetname: ${{ inputs.targetname }}"
+          echo "github.event.repository.name: ${{ github.event.repository.name }}"
     - name: Generate Documentation
       run: |
           swift package --allow-writing-to-directory ./docs \
