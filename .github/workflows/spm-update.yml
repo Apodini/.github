@@ -38,7 +38,7 @@ jobs:
       image: swift:focal
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Check Environment
       run: |
           swift --version
@@ -47,7 +47,9 @@ jobs:
           echo "inputs.branch: ${{ inputs.branch }}"
     - name: Update Swift Packages
       run: swift package update
-    - uses: peter-evans/create-pull-request@v3
+    - name: Add Safe Directory
+      run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+    - uses: peter-evans/create-pull-request@v4
       with:
         token: ${{ secrets.token }}
         commit-message: Update dependencies
