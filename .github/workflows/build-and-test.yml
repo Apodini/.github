@@ -39,11 +39,16 @@ on:
         type: boolean
         default: false
       homebrewdependencies:
-        description: 'Dependencies that mus be installed using homebrew before builds on macOS'
+        description: 'Dependencies that must be installed using homebrew before builds on macOS'
         required: false
         type: string
       installprotoc:
-        description: 'A flag indicating if protobuf compuler should be installed'
+        description: 'A flag indicating if the protobuf compiler should be installed'
+        required: false
+        type: boolean
+        default: false
+      setpythonlibraryenv:
+        description: 'The PYTHON_LIBRARY variable is set to point to the default python library if this flag is set.'
         required: false
         type: boolean
         default: false
@@ -148,6 +153,11 @@ jobs:
         unzip protoc-3.19.4-linux-x86_64.zip
         mv bin/* /usr/local/bin
         mv include/* /usr/local/include
+    - name: Set PYTHON_LIBRARY
+      if: inputs.setpythonlibraryenv
+      run: |
+        pip3 install find_libpython
+        echo "PYTHON_LIBRARY=$(python3 -m find_libpython)" >> $GITHUB_ENV
     - uses: actions/cache@v2
       with:
         path: .build
