@@ -54,7 +54,7 @@ jobs:
           context: .
           file: ${{ inputs.docker-file }}
           build-args: |
-            baseimage=swiftarm/swift:5.5.1-ubuntu-focal
+            baseimage=swift:focal
           push: true
           tags: ghcr.io/${{ inputs.image-name }}:latest-arm64,ghcr.io/${{ inputs.image-name }}:${{ steps.latesttag.outputs.tag }}-arm64
   dockerAMD64:
