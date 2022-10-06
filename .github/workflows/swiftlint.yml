@@ -19,9 +19,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: GitHub Action for SwiftLint
-        uses: norio-nomura/action-swiftlint@3.2.1
+      - name: SwiftLint
+        uses: sinoru/actions-swiftlint@v6
         with:
-          args: --strict
+          swiftlint-version: 'main'
+          swiftlint-args: --strict
         env:
           DIFF_BASE: ${{ github.base_ref }}
