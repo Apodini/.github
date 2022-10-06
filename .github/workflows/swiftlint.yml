@@ -22,7 +22,7 @@ jobs:
       - name: SwiftLint
         uses: sinoru/actions-swiftlint@v6
         with:
-          swiftlint-version: '0.49.1'
+          swiftlint-version: 'main'
           swiftlint-args: --strict
         env:
           DIFF_BASE: ${{ github.base_ref }}
